@@ -1,6 +1,12 @@
 # perplexitylabs
 A python api to use labs.perplexity.ai using Selenium.
 
+# Rquirements:
+pip install fake-useragent
+pip install beautifulsoup4
+pip install selenium
+pip install selenium-wire
+
 # Usage
 You can import the Perplexity class and use it like this:
 ```python
