@@ -4,6 +4,7 @@ from random import getrandbits
 from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 from time import time
+import time
 import json
 import logging
 
@@ -22,7 +23,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-class Perplexity_Selenium:
+class Perplexity:
     """A class to interact with the Perplexity website.
     To get started, you need to create an instance of this class.
     For now, this class only supports one answer at a time.
@@ -36,8 +37,6 @@ class Perplexity_Selenium:
         options = webdriver.ChromeOptions()
         options.add_argument(f'--user-agent={self.user_agent}')
         options.add_argument("--headless=new")  # for hidden mode
-        #options.add_argument("--start-maximized")
-        #options.add_argument("--window-size=1920,955")
 
         # Initialize the Chrome driver
         self.driver = webdriver.Chrome(options=options)
@@ -87,8 +86,8 @@ class Perplexity_Selenium:
         
         # Count the number of characters
         character_count = len(self.query_str)
-        if character_count > 2000:
-            return "Input string is greater than 2000 character limit."
+        #if character_count > 2000:
+        #    return "Input string is greater than 2000 character limit."
         
         # Wait for the textarea element to be visible
         wait = WebDriverWait(self.driver, 10)
@@ -111,17 +110,18 @@ class Perplexity_Selenium:
         # Click on the button
         button.click()
                 
+        start_time = time.time()
         response = ""
 
-        while '"status":"completed"' not in response and '"final":true' not in response:
+        while time.time() - start_time < timeout_seconds:
             for request in self.driver.requests:
                 if "https://labs-api.perplexity.ai/socket.io/?EIO=4&transport=polling&t=" in request.url:
-                    #print(request.url)
+                    # print(request.url)
                     if request.response is not None:
                         data = decode(request.response.body, request.response.headers.get('Content-Encoding', 'identity'))
                         data = data.decode("utf8")
                         response = data
-                        #print(response)
+                        # print(response)
             if response.startswith(f"42[\"{self.model}_query_progress"):
                 if '"status":"completed"' in response and '"final":true' in response:
                     # Split the response by "42["llama-2-13b-chat_query_progress"," to separate the JSON objects
@@ -137,18 +137,19 @@ class Perplexity_Selenium:
                             # Check if "output" exists in the data
                             if "output" in data:
                                 self.answer = data["output"].strip()
-                                #If you need the token count...
+                                # If you need the token count...
                                 self.tokens = data["tokens_streamed"]
                                 self.searching = False
                                 break
             sleep(1)
-        
-        #self.driver.save_screenshot('perplexity_message_response.png')
-        
+
+        # self.driver.save_screenshot('perplexity_message_response.png')
+
         if self.answer != "":
             formatted_output = self.answer.replace('\\n', '\n').replace('\\t', '\t')
             return formatted_output
         else:
-            self.searching = False       
-        
+            self.searching = False
+
         self.driver.quit()
+        return None  # Return None if the search times out
