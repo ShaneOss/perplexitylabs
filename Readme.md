@@ -23,7 +23,7 @@ print(answer)
 
 You can even create a cli tool with it:
 ```python
-from Perplexity import Perplexity
+from Perplexity_Selenium import Perplexity
 
 perplexity = Perplexity()
 
