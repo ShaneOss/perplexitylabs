@@ -1,5 +1,5 @@
 # perplexitylabs
-A python api to use labs.perplexity.ai using Selenium
+A python api to use labs.perplexity.ai using Selenium.
 
 # Usage
 You can import the Perplexity class and use it like this:
