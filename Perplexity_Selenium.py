@@ -78,7 +78,7 @@ class Perplexity:
         
         self.driver.save_screenshot('perplexity_model_selected.png')
 
-    def search(self, query: str, retry_count=0):
+    def search(self, query: str, timeout_seconds=40):
         self.driver.get("https://labs.perplexity.ai")
         self.searching = True
         formatted_query = query.replace('\n', '\\n').replace('\t', '\\t')
