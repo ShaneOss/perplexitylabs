@@ -40,6 +40,7 @@ class Perplexity:
         options.add_argument("--headless=new")  # for hidden mode
         options.add_argument("--start-maximized")
         options.add_argument("--window-size=1920,955")
+        options.add_argument('--disable-unicode')  # Disable Unicode support
 
         # Initialize the Chrome driver
         self.driver = webdriver.Chrome(options=options)
@@ -82,6 +83,9 @@ class Perplexity:
         #self.driver.save_screenshot('perplexity_model_selected.png')
 
     def search(self, query: str, retry_count=0):
+        #clear any existing requests
+        del self.driver.requests
+        
         self.driver.get("https://labs.perplexity.ai")
         self.searching = True
         formatted_query = query.replace('\n', '\\n').replace('\t', '\\t')
