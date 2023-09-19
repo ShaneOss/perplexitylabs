@@ -58,7 +58,7 @@ class Perplexity:
         self.model = "llama-2-13b-chat"
         
 
-    def search(self, query: str, retry_count=0):
+    def search(self, query: str):
         #clear any existing requests
         del self.driver.requests
         
