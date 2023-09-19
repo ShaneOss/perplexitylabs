@@ -40,7 +40,6 @@ class Perplexity:
         options.add_argument("--headless=new")  # for hidden mode
         options.add_argument("--start-maximized")
         options.add_argument("--window-size=1920,955")
-        options.add_argument('--disable-unicode')  # Disable Unicode support
 
         # Initialize the Chrome driver
         self.driver = webdriver.Chrome(options=options)
@@ -57,13 +56,14 @@ class Perplexity:
         # llama-2-13b-chat
         # llama-2-70b-chat
         self.model = "llama-2-13b-chat"
-        self.init_main()
         
 
-    def init_main(self):
-        # Open the Perplexity website
+    def search(self, query: str, retry_count=0):
+        #clear any existing requests
+        del self.driver.requests
+        
         self.driver.get("https://labs.perplexity.ai")
-    
+        
         try:
             # Wait for the dropdown element to be visible
             wait = WebDriverWait(self.driver, 10)
@@ -79,14 +79,9 @@ class Perplexity:
 
         except Exception as e:
             print(f"Error: {e}")
-        
+            
         #self.driver.save_screenshot('perplexity_model_selected.png')
-
-    def search(self, query: str, retry_count=0):
-        #clear any existing requests
-        del self.driver.requests
         
-        self.driver.get("https://labs.perplexity.ai")
         self.searching = True
         formatted_query = query.replace('\n', '\\n').replace('\t', '\\t')
         self.query_str = formatted_query
